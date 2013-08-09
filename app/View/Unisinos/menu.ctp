@@ -2,4 +2,5 @@
 <ul class="nav nav-tabs nav-stacked">
   <li><?php echo $this->Html->link('Ver Notas', array('controller' => 'unisinos', 'action' => 'getNotas'))?></li>
   <li><?php echo $this->Html->link('Ver Faltas', array('controller' => 'unisinos', 'action' => 'getFaltas'))?></li>
+  <li><?php echo $this->Html->link('Quadro de Horários', 'javascript:;')?></li>
 </ul>
