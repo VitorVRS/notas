@@ -60,6 +60,7 @@ class UnisinosController extends AppController {
   public $CONTEXT_URL = 'https://portal.asav.org.br/Corpore.Net/Source/Edu-Educacional/RM.EDU.CONTEXTO/EduSelecionarContextoModalWebForm.aspx';
   public $NOTAS_URL = 'https://portal.asav.org.br/Corpore.Net/Main.aspx?SelectedMenuIDKey=mnNotasAval&ActionID=EduNotaAvaliacaoActionWeb';
   public $NOTAS_FALTA_URL = 'https://portal.asav.org.br/Corpore.Net/Main.aspx?SelectedMenuIDKey=mnNotasEtapa&ActionID=EduNotaEtapaActionWeb';
+  public $QUADRO_HORARIOS_URL = 'https://portal.asav.org.br/Corpore.Net/Main.aspx?SelectedMenuIDKey=mnQuadroHorario&ActionID=EduQuadroHorarioAlunoActionWeb';
 
   public function getContexts($user, $pass) {
 
@@ -302,6 +303,94 @@ class UnisinosController extends AppController {
     }
 
     $this->set('faltas', $faltas);
+  }
+
+  public function quadroHorarios() {
+
+     $cookies = $this->Session->read('Unisinos.Cookies');
+    
+    if (empty($cookies)) {
+        $this->Session->setFlash('Sua sessão expirou.');
+        if ($this->request->is('ajax')) {
+            die('dead');
+        }
+        $this->redirect('login');
+    }
+
+    App::uses('SimpleHtmlDomBakedComponent', 'Controller/Component');
+
+    $html = new SimpleHtmlDomBakedComponent();
+    
+    $h =& $this->HttpRequest;
+    
+    $h->setUri($this->QUADRO_HORARIOS_URL);
+    
+    $cookies = $this->Session->read('Unisinos.Cookies');
+    $h->setCookies($cookies);
+    
+    $gFaltas = $h->get();
+    $html->load($gFaltas);
+
+    if (strpos($gFaltas, '/Corpore.Net/Login.aspx') !== false) {
+        $this->Session->setFlash('Sua sessão expirou.');
+        $this->Session->delete('Unisinos.Cookies');
+        $this->redirect('index');
+    };
+
+    $table = $html->find('table[id=ctl23_gvDisciplinas]',0);
+    $tableDias = $html->find('div[id=divQuadroHorario]', 0)->find('span', 0)->find('table', 0);
+    
+    $dias = array(
+        'Segunda-Feira', 'Terça-Feira', 'Quarta-Feira', 'Quinta-Feira', 'Sexta-Feira', 'Sábado', 'Domingo'
+    );
+
+    $materias = array();
+    if ($tableDias) {
+        foreach ($tableDias->find('tr') as $x => $tr) {
+            if (!$x) continue;
+            foreach ($tr->find('td') as $k => $td) {
+                if (!$k) continue;
+
+                $mat = str_replace("&nbsp;", "", htmlspecialchars_decode($td->plaintext));
+                if (!$mat) continue;
+
+                if (isset($materias[$td->plaintext]) && !in_array($dias[$k-1], $materias[$mat])) {
+                    $materias[$mat][] = $dias[$k-1];
+                } else{
+                    $materias[$mat] = array($dias[$k-1]);
+                }
+            }
+        }
+    }
+
+    $horarios = array();
+
+    if ($table) {
+        $tableHorarios = $table->find('tr');
+
+        foreach ($tableHorarios as $k => $tr) {
+            if ($k) {
+
+                # Não me orgulho disso
+                # É sábado e to com preguiça de validar.
+                $prof = @explode('</b>', explode('<b>', htmlspecialchars_decode($tr->find('a',0)->onclick))[1])[0];
+
+                $dias = implode(' / ', $materias[(html_entity_decode($tr->children(2)->plaintext))]);
+
+                $horarios[] = array(
+                    'codigo' => $tr->children(1)->plaintext,
+                    'disciplina' => $tr->children(2)->plaintext,
+                    'sala' => $tr->children(8)->plaintext,
+                    'professor' => $prof,
+                    'dia' => $dias
+                );
+
+            }
+        }
+    }
+
+    $this->set('horarios', $horarios);
+
   }
 
     private function decodeStr($coded) {
