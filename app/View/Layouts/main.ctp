@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Unisinos Mobile</title>
+    <title>VitorVRS - Notas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -34,7 +34,7 @@
         }
       ?>
     </div>
-<!--
+
     <footer class="footer">
       <div class="container">
         <p>Desenvolvido por VitorVRS.</p>
@@ -47,25 +47,13 @@
         </ul>
       </div>
     </footer>
--->
+
     <?php
 
       echo $this->Html->script(array(
         'jquery.js',
         'bootstrap.min.js',
         'system.js'
-        #'bootstrap-transition.js',
-        #'bootstrap-alert.js',
-        #'bootstrap-modal.js',
-        #'bootstrap-dropdown.js',
-        #'bootstrap-scrollspy.js',
-        #'bootstrap-tab.js',
-        #'bootstrap-tooltip.js',
-        #'bootstrap-popover.js',
-        #'bootstrap-button.js',
-        #'bootstrap-collapse.js',
-        #'bootstrap-carousel.js',
-        #'bootstrap-typeahead.js'
       ));
 
       $this->fetch('script');
