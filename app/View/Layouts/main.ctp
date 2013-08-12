@@ -29,7 +29,7 @@
       <?php 
         echo $this->Session->flash();
         echo $this->fetch('content'); 
-        if ($this->Session->read('Unisinos')) {
+        if ($this->Session->read('Notas')) {
           echo $this->Html->link('Sair', '/', array('class' => 'btn btn-small btn-small pull-right'));
         }
       ?>

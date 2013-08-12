@@ -5,7 +5,7 @@
     foreach ($contexts as $k=>$value) :
   ?>
 
-      <li><?php echo $this->Html->link($value, array('controller' => 'unisinos', 'action' => 'menu', $k)); ?></li>
+      <li><?php echo $this->Html->link($value, array('controller' => 'main', 'action' => 'menu', $k)); ?></li>
 
   <?php
     endforeach;
