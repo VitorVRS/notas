@@ -12,6 +12,7 @@
 
       params[u.attr('name')] = f(u.val())
       params[p.attr('name')] = f(p.val())
+      $('#loader').show();
       $.post(this.action, params, function(){
         window.location.reload();
       })

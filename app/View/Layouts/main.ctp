@@ -33,6 +33,9 @@
           echo $this->Html->link('Sair', '/', array('class' => 'btn btn-small btn-small pull-right'));
         }
       ?>
+
+      <div id="loader" style="display:none;"><?php echo $this->Html->image('350.gif');?></div>
+
     </div>
 
     <footer class="footer">
